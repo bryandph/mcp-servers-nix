@@ -27,6 +27,7 @@ in
 
   # official servers
   aws-api-mcp-server = pkgs.callPackage ./official/aws-api { };
+  azure-mcp-server = pkgs.callPackage ./official/azure { };
   context7-mcp = pkgs.callPackage ./official/context7 { };
   deepl-mcp-server = pkgs.callPackage ./official/deepl { };
   esa-mcp-server = pkgs.callPackage ./official/esa { };
