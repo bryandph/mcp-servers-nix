@@ -27,6 +27,7 @@ in
 
   # official servers
   aws-api-mcp-server = pkgs.callPackage ./official/aws-api { };
+  azure-mcp-server = pkgs.callPackage ./official/azure { };
   chrome-devtools-mcp = pkgs.callPackage ./official/chrome-devtools { };
   context7-mcp = pkgs.callPackage ./official/context7 { };
   deepl-mcp-server = pkgs.callPackage ./official/deepl { };
