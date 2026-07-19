@@ -1,28 +1,73 @@
 {
   lib,
-  buildDotnetModule,
-  dotnetCorePackages,
-  fetchFromGitHub,
+  stdenvNoCC,
+  fetchurl,
+  makeWrapper,
+  unzip,
 }:
 
-buildDotnetModule rec {
+let
+  assets = {
+    aarch64-linux = {
+      name = "Azure.Mcp.Server-linux-arm64.zip";
+      hash = "sha256-rn4H6vkc1eeEO/Jy2MEUk+JuQMBnbn1RvE/o80RxKBU=";
+    };
+    x86_64-linux = {
+      name = "Azure.Mcp.Server-linux-x64.zip";
+      hash = "sha256-GXPmHvGDrizKB911HyckJro3wKiYCZm0vcSKlgdzFOA=";
+    };
+    aarch64-darwin = {
+      name = "Azure.Mcp.Server-osx-arm64.zip";
+      hash = "sha256-c18HBzxMUkOpkwZF0LI9hu7AQ6JF2SM4TOifRqulvtk=";
+    };
+    x86_64-darwin = {
+      name = "Azure.Mcp.Server-osx-x64.zip";
+      hash = "sha256-JuITXHIS7RzX5MDCRSxMavRseLrZIpoKOBA4/d8UAAw=";
+    };
+  };
+  asset = assets.${stdenvNoCC.hostPlatform.system};
+in
+stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "azure-mcp-server";
-  version = "1.0.1";
+  version = "2.0.5";
 
-  src = fetchFromGitHub {
-    owner = "microsoft";
-    repo = "mcp";
-    tag = "Azure.Mcp.Server-${version}";
-    hash = "sha256-NTShVf783nUnP3H1WqCZkMul5MSDSpiwVZAfnTXxkFI=";
+  src = fetchurl {
+    url = "https://github.com/microsoft/mcp/releases/download/Azure.Mcp.Server-${finalAttrs.version}/${asset.name}";
+    inherit (asset) hash;
   };
 
-  projectFile = "servers/Azure.Mcp.Server/src/Azure.Mcp.Server.csproj";
-  nugetDeps = ./deps.json;
+  nativeBuildInputs = [
+    makeWrapper
+    unzip
+  ];
 
-  dotnet-sdk = dotnetCorePackages.sdk_10_0;
-  dotnet-runtime = dotnetCorePackages.aspnetcore_9_0;
+  dontConfigure = true;
+  dontBuild = true;
+  dontStrip = true;
 
-  executables = [ "azmcp" ];
+  unpackPhase = ''
+    runHook preUnpack
+    unzip "$src"
+    runHook postUnpack
+  '';
+
+  installPhase = ''
+    runHook preInstall
+    mkdir -p "$out/bin" "$out/libexec/azure-mcp-server"
+    cp -R . "$out/libexec/azure-mcp-server"
+    chmod +x "$out/libexec/azure-mcp-server/azmcp"
+    makeWrapper "$out/libexec/azure-mcp-server/azmcp" "$out/bin/azmcp" \
+      --run 'export DOTNET_BUNDLE_EXTRACT_BASE_DIR="''${XDG_CACHE_HOME:-$HOME/.cache}/azure-mcp-server/dotnet-bundle"; mkdir -p "$DOTNET_BUNDLE_EXTRACT_BASE_DIR"'
+    runHook postInstall
+  '';
+
+  doInstallCheck = true;
+  installCheckPhase = ''
+    runHook preInstallCheck
+    export XDG_CACHE_HOME="$TMPDIR/cache"
+    "$out/bin/azmcp" --version
+    runHook postInstallCheck
+  '';
 
   passthru.updateScript = ./update.sh;
 
@@ -32,5 +77,6 @@ buildDotnetModule rec {
     license = lib.licenses.mit;
     maintainers = [ ];
     mainProgram = "azmcp";
+    platforms = builtins.attrNames assets;
   };
-}
+})
