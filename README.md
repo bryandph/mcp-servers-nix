@@ -80,6 +80,7 @@ The output format adapts to the `flavor` option — see [Supported Flavors](#sup
 - [fetch](./modules/servers/fetch.nix)
 - [filesystem](./modules/servers/filesystem.nix)
 - [freee](./modules/servers/freee.nix)
+- [gcloud](./modules/servers/gcloud.nix)
 - [git](./modules/servers/git.nix)
 - [github](./modules/servers/github.nix)
 - [grafana](./modules/servers/grafana.nix)
