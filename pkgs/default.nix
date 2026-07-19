@@ -30,6 +30,7 @@ in
   deepl-mcp-server = pkgs.callPackage ./official/deepl { };
   esa-mcp-server = pkgs.callPackage ./official/esa { };
   freee-mcp = pkgs.callPackage ./official/freee { };
+  kubernetes-mcp-server = pkgs.callPackage ./official/kubernetes { };
   mastra-mcp-docs-server = pkgs.callPackage ./official/mastra { };
   nd-mcp = pkgs.callPackage ./official/netdata { };
   tavily-mcp = pkgs.callPackage ./official/tavily { };
