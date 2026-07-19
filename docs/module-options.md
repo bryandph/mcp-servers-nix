@@ -3355,6 +3355,8 @@ attribute set of (boolean or signed integer or string)
 
 ## programs\.git\.envFile
 
+
+
 Path to an \.env from which to load additional environment variables\.
 When flavor is set to ‘vscode’, the environment file is passed directly as a parameter instead of wrapping by default\.
 
@@ -5808,8 +5810,6 @@ list of (boolean or signed integer or string)
 
 ## programs\.notion\.env
 
-
-
 Environment variables for the server\.
 For security reasons, do not hardcode your credentials in the env\.
 All files in /nix/store can be read by anyone with access to the store\.
@@ -6792,6 +6792,8 @@ null
 
 ## programs\.sequential-thinking\.url
 
+
+
 URL of the server (for “http” and “sse”)\.
 
 
@@ -6813,6 +6815,8 @@ null
 
 
 ## programs\.serena\.enable
+
+
 
 Whether to enable serena\.
 
@@ -6843,6 +6847,8 @@ true
 
 
 ## programs\.serena\.enableWebDashboard
+
+
 
 Enable or disable the Serena web dashboard\.
 If null, the default setting will be used\.
@@ -6991,6 +6997,8 @@ null
 
 
 ## programs\.serena\.extraPackages
+
+
 
 Extra packages available in the serena wrapper’s PATH\.
 This is useful for including language servers and other tools
