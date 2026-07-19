@@ -1,0 +1,67 @@
+{
+  "name": "@opentofu/opentofu-mcp-server",
+  "version": "0.1.5",
+  "description": "OpenTofu MCP Server for accessing the OpenTofu Registry",
+  "main": "dist/local.js",
+  "type": "module",
+  "bin": {
+    "opentofu-mcp-server": "dist/local.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && chmod +x dist/local.js",
+    "start": "node dist/local.js",
+    "generate-api": "openapi-typescript https://api.opentofu.org/openapi.yml --output src/generated/opentofu-api.ts",
+    "test": "vitest",
+    "lint": "biome check .",
+    "format": "biome format . --write",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm build",
+    "deploy": "wrangler deploy",
+    "dev:worker": "wrangler dev"
+  },
+  "keywords": [
+    "opentofu",
+    "mcp",
+    "registry",
+    "model-context-protocol",
+    "claude",
+    "chatgpt"
+  ],
+  "author": "OpenTofu Contributors",
+  "license": "MPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opentofu/opentofu-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/opentofu/opentofu-mcp-server/issues"
+  },
+  "homepage": "https://github.com/opentofu/opentofu-mcp-server#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.12.0",
+    "agents": "0.0.92",
+    "semver": "7.7.2",
+    "zod": "3.25.17"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@cloudflare/workers-types": "4.20250523.0",
+    "@types/node": "22.15.21",
+    "@types/semver": "7.7.0",
+    "openapi-typescript": "5.4.2",
+    "react": "19.1.0",
+    "ts-node": "10.9.2",
+    "typescript": "5.8.3",
+    "vitest": "3.1.4",
+    "wrangler": "4.16.1"
+  }
+}

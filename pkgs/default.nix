@@ -36,6 +36,7 @@ in
   tavily-mcp = pkgs.callPackage ./official/tavily { };
   mcp-grafana = warnRemoved "mcp-grafana has been removed since it is now available in the nixpkgs 25.11 stable release";
   notion-mcp-server = pkgs.callPackage ./official/notion { };
+  opentofu-mcp-server = pkgs.callPackage ./official/opentofu { };
   playwright-mcp = pkgs.callPackage ./official/playwright { };
   github-mcp-server = warnRemoved "github-mcp-server has been removed since it is now available in the nixpkgs 25.11 stable release";
   serena = pkgs.callPackage ./official/serena { };
