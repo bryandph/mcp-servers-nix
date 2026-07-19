@@ -12,4 +12,10 @@
     playwright.enable = true;
     context7.enable = true;
   };
+
+  mcp-servers.flavors = {
+    claude-code.enable = true;
+    codex.enable = true;
+    opencode.enable = true;
+  };
 }

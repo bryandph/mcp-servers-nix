@@ -166,7 +166,7 @@ If you're already using [flake-parts](https://flake.parts/), the flake-parts mod
 
 Key features:
 
-- **Multi-flavor support**: Generate configurations for Claude Code (`.mcp.json`) and VS Code workspace (`.vscode/mcp.json`) simultaneously
+- **Multi-flavor support**: Generate configurations for Claude Code (`.mcp.json`), Codex (`.codex/config.toml`), OpenCode (`opencode.json`), and VS Code workspace (`.vscode/mcp.json`) simultaneously
 - **Automatic development shell**: `config.mcp-servers.devShell` sets up symlinks to configuration files
 - **GC root management**: `addGcRoot` (default: `true`) prevents garbage collection of config files and server packages
 - **Per-flavor overrides**: Customize `programs` and `settings` per flavor
@@ -175,7 +175,7 @@ For the full list of flake-parts options, see [Configuration Reference](configur
 
 ## Using devenv
 
-If you're using [devenv](https://devenv.sh/), the devenv module integrates with devenv's built-in `claude.code.mcpServers` option. Instead of generating `.mcp.json` via shellHook, it outputs through devenv's native Claude Code support.
+If you're using [devenv](https://devenv.sh/), the devenv module uses devenv's managed-files lifecycle to materialize MCP configuration for Claude Code, Codex, and OpenCode. It owns only the corresponding MCP files and leaves unrelated harness settings alone.
 
 ```yaml
 # devenv.yaml
@@ -200,13 +200,20 @@ inputs:
     playwright.enable = true;
     context7.enable = true;
   };
+
+  mcp-servers.flavors = {
+    claude-code.enable = true;
+    codex.enable = true;
+    opencode.enable = true;
+  };
 }
 ```
 
 Key features:
 
 - **Declarative interface**: Same `programs.<name>.enable` interface as the flake-parts module
-- **Native devenv integration**: Outputs through `claude.code.mcpServers` — devenv handles `.mcp.json` generation
+- **Managed-file integration**: Devenv manages `.mcp.json`, `.codex/config.toml`, and `opencode.json` idempotently
+- **Narrow ownership**: The adapter does not modify `.claude/settings.json`, `opencode.jsonc`, or other harness configuration
 - **Credential wrapping**: `envFile` and `passwordCommand` work naturally since they produce Nix store paths
 
 See [`examples/devenv`](../examples/devenv) for a complete example.

@@ -65,6 +65,7 @@
                 # Override filesystem args for Claude Code
                 programs.filesystem.args = [ "../.." ];
               };
+              codex.enable = true;
               vscode-workspace = {
                 enable = true;
                 # VSCode-specific configuration
