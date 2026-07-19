@@ -29,6 +29,25 @@ let
     opencode = "opencode.json";
   };
 
+  normalizeServer =
+    server:
+    server
+    // lib.optionalAttrs (server ? args) {
+      args = map toString server.args;
+    }
+    // lib.optionalAttrs (server ? env) {
+      env = lib.mapAttrs (_: toString) server.env;
+    };
+
+  normalizeConfig = moduleConfig: {
+    programs = lib.mapAttrs (_: normalizeServer) moduleConfig.programs;
+    settings =
+      moduleConfig.settings
+      // lib.optionalAttrs (moduleConfig.settings ? servers) {
+        servers = lib.mapAttrs (_: normalizeServer) moduleConfig.settings.servers;
+      };
+  };
+
   mkFlavorConfig =
     flavor:
     let
@@ -36,7 +55,8 @@ let
       mergedConfig =
         lib.recursiveUpdate
           {
-            inherit (cfg) programs settings;
+            inherit (cfg) programs;
+            settings = lib.recursiveUpdate { servers = { }; } cfg.settings;
           }
           {
             inherit (flavorCfg) programs settings;
@@ -46,7 +66,7 @@ let
       inherit flavor;
       format = flavorFormatMap.${flavor};
     }
-    // mergedConfig;
+    // normalizeConfig mergedConfig;
 
   mkFlavorOutput = flavor: mcp-lib.evalModule pkgs (mkFlavorConfig flavor);
 
