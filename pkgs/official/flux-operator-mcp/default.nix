@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   fetchurl,
+  nix-update-script,
 }:
 
 let
@@ -51,7 +52,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook postInstallCheck
   '';
 
-  passthru.updateScript = ./update.sh;
+  passthru.updateScript = nix-update-script {
+    extraArgs = [ "--use-github-releases" ];
+  };
 
   meta = {
     description = "Model Context Protocol server for Flux Operator";
