@@ -1,9 +1,14 @@
 {
   lib,
+  stdenv,
   stdenvNoCC,
   fetchurl,
   makeWrapper,
   unzip,
+  patchelf,
+  icu,
+  openssl,
+  zlib,
 }:
 
 let
@@ -26,6 +31,14 @@ let
     };
   };
   asset = assets.${stdenvNoCC.hostPlatform.system};
+  # The self-extracting bundle dlopens these at runtime; they are not in
+  # the apphost's DT_NEEDED, so they must come in via LD_LIBRARY_PATH.
+  runtimeLibs = lib.makeLibraryPath [
+    stdenv.cc.cc.lib
+    icu
+    openssl
+    zlib
+  ];
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "azure-mcp-server";
@@ -39,7 +52,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   nativeBuildInputs = [
     makeWrapper
     unzip
-  ];
+  ]
+  ++ lib.optionals stdenvNoCC.hostPlatform.isLinux [ patchelf ];
 
   dontConfigure = true;
   dontBuild = true;
@@ -56,8 +70,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     mkdir -p "$out/bin" "$out/libexec/azure-mcp-server"
     cp -R . "$out/libexec/azure-mcp-server"
     chmod +x "$out/libexec/azure-mcp-server/azmcp"
+  ''
+  + lib.optionalString stdenvNoCC.hostPlatform.isLinux ''
+    patchelf --set-interpreter ${stdenv.cc.bintools.dynamicLinker} \
+      "$out/libexec/azure-mcp-server/azmcp"
+  ''
+  + ''
     makeWrapper "$out/libexec/azure-mcp-server/azmcp" "$out/bin/azmcp" \
-      --run 'export DOTNET_BUNDLE_EXTRACT_BASE_DIR="''${XDG_CACHE_HOME:-$HOME/.cache}/azure-mcp-server/dotnet-bundle"; mkdir -p "$DOTNET_BUNDLE_EXTRACT_BASE_DIR"'
+      --run 'export DOTNET_BUNDLE_EXTRACT_BASE_DIR="''${XDG_CACHE_HOME:-$HOME/.cache}/azure-mcp-server/dotnet-bundle"; mkdir -p "$DOTNET_BUNDLE_EXTRACT_BASE_DIR"' ${lib.optionalString stdenvNoCC.hostPlatform.isLinux "--prefix LD_LIBRARY_PATH : ${runtimeLibs}"}
     runHook postInstall
   '';
 
