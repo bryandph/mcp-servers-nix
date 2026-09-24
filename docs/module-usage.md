@@ -166,7 +166,7 @@ If you're already using [flake-parts](https://flake.parts/), the flake-parts mod
 
 Key features:
 
-- **Multi-flavor support**: Generate configurations for Claude Code (`.mcp.json`) and VS Code workspace (`.vscode/mcp.json`) simultaneously
+- **Multi-flavor support**: Generate configurations for Claude Code (`.mcp.json`), Codex (`.codex/config.toml`), OpenCode (`opencode.json`), and VS Code workspace (`.vscode/mcp.json`) simultaneously
 - **Automatic development shell**: `config.mcp-servers.devShell` sets up symlinks to configuration files
 - **GC root management**: `addGcRoot` (default: `true`) prevents garbage collection of config files and server packages
 - **Per-flavor overrides**: Customize `programs` and `settings` per flavor

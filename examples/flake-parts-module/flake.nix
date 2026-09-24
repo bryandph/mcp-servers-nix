@@ -65,6 +65,14 @@
                 # Override filesystem args for Claude Code
                 programs.filesystem.args = [ "../.." ];
               };
+              codex = {
+                enable = true;
+                programs = {
+                  filesystem.enable = false;
+                  playwright.enable = false;
+                };
+                settings.servers.fixture.command = "/usr/bin/false";
+              };
               vscode-workspace = {
                 enable = true;
                 # VSCode-specific configuration
@@ -75,6 +83,13 @@
 
           # Use the generated devShell
           devShells.default = config.mcp-servers.devShell;
+
+          checks.codex-flavor =
+            assert pkgs.lib.hasInfix ".codex/config.toml" config.mcp-servers.shellHook;
+            pkgs.runCommand "test-codex-flake-parts-flavor" { } ''
+              grep -q '^\[mcp_servers.fixture\]' ${config.mcp-servers.configs.codex}
+              touch $out
+            '';
 
           # Or compose with your own devShell
           # devShells.default = pkgs.mkShell {
