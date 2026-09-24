@@ -7,6 +7,10 @@
 }:
 
 let
+  fastmcp = import ./fastmcp.nix {
+    inherit lib fetchFromGitHub python3Packages;
+  };
+
   awscli-python = python3Packages.buildPythonPackage {
     pname = "awscli";
     inherit (awscli) version src;
@@ -57,7 +61,6 @@ python3Packages.buildPythonApplication (finalAttrs: {
       boto3
       botocore
       distro
-      fastmcp
       importlib-resources
       loguru
       lxml
@@ -68,7 +71,10 @@ python3Packages.buildPythonApplication (finalAttrs: {
       requests
       setuptools
     ])
-    ++ [ awscli-python ];
+    ++ [
+      awscli-python
+      fastmcp
+    ];
 
   pythonImportsCheck = [ "awslabs.aws_api_mcp_server.server" ];
 
