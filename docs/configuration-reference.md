@@ -167,7 +167,17 @@ devShells.default = pkgs.mkShell {
 
 ## devenv Module Options
 
-The devenv module (`devenvModules.default`) provides `mcp-servers.programs` and `mcp-servers.settings` options — the same interface as the [flake-parts module](#flake-parts-module-options). It maps configurations to devenv's native `claude.code.mcpServers`.
+The devenv module (`devenvModules.default`) provides the same base `mcp-servers.programs`, `mcp-servers.settings`, and per-flavor override interface as the [flake-parts module](#flake-parts-module-options). It supports `claude-code`, `codex`, and `opencode`; Claude Code is enabled by default for compatibility.
+
+Enabled flavors are materialized through devenv's managed `files` lifecycle:
+
+| Flavor | Managed file |
+|--------|--------------|
+| `claude-code` | `.mcp.json` |
+| `codex` | `.codex/config.toml` |
+| `opencode` | `opencode.json` |
+
+The adapter owns only these MCP files. It does not configure Claude settings, OpenCode settings, or other unrelated harness state. Generated paths are also exposed through the read-only `mcp-servers.configs` option; their server packages are exposed through `mcp-servers.packages`.
 
 ## Home Manager Module Options
 
