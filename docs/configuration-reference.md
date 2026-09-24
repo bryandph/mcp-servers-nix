@@ -120,7 +120,7 @@ Whether to add generated config files to garbage collector roots. Prevents `nix-
 perSystem.mcp-servers.flavors.<name>.{enable, programs, settings}
 ```
 
-Per-flavor configuration. Currently supported flavors: `claude-code` and `vscode-workspace`.
+Per-flavor configuration. Supported flavors: `claude-code`, `codex`, `opencode`, and `vscode-workspace`.
 
 - `enable`: Enable configuration generation for this flavor
 - `programs`: Override base programs for this flavor (recursively merged)
@@ -132,6 +132,8 @@ mcp-servers.flavors = {
     enable = true;
     programs.filesystem.args = [ "../.." ];
   };
+  codex.enable = true;
+  opencode.enable = true;
   vscode-workspace = {
     enable = true;
     programs.playwright.env.CUSTOM_SETTING = "vscode-value";
