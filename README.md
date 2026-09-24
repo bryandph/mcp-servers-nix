@@ -96,6 +96,7 @@ The output format adapts to the `flavor` option — see [Supported Flavors](#sup
 - [terraform](./modules/servers/terraform.nix)
 - [textlint](./modules/servers/textlint.nix)
 - [time](./modules/servers/time.nix)
+- [woodpecker](./modules/servers/woodpecker.nix)
 
 ## Examples
 
