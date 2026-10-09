@@ -4,7 +4,7 @@
   fetchFromGitHub,
   fetchPnpmDeps,
   pnpmConfigHook,
-  pnpm_10,
+  pnpm_11,
   nodejs-slim,
   makeBinaryWrapper,
   nix-update-script,
@@ -23,8 +23,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   # The v1.0.0 tag carries a pnpm 8 lockfile and floating dependency
   # specifiers. Use the mechanically migrated pnpm 10 lock and its matching
-  # exact-version manifest so evaluation does not require vulnerable pnpm 8/9
-  # releases and updates remain explicit.
+  # exact-version manifest so updates remain explicit. Build with pnpm 11:
+  # nixpkgs marks pnpm 8/9/10 insecure, and pnpm 11 reads the same lockfile.
   postPatch = ''
     cp ${./package.json} package.json
     cp ${./pnpm-lock.yaml} pnpm-lock.yaml
@@ -32,16 +32,16 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
-    pnpm = pnpm_10;
+    pnpm = pnpm_11;
     fetcherVersion = 3;
     postPatch = finalAttrs.postPatch;
-    hash = "sha256-abz97iuymlaaqeym0uFtN50cZarQxxU25Mwr5Ft69bQ=";
+    hash = "sha256-1Wu0DatVnETC50MVnU5wCKlVjuzooxfkQk1eN+ZPI5U=";
   };
 
   nativeBuildInputs = [
     nodejs-slim
     pnpmConfigHook
-    pnpm_10
+    pnpm_11
     makeBinaryWrapper
   ];
 
