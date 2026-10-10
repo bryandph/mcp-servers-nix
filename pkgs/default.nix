@@ -32,6 +32,7 @@ in
   context7-mcp = pkgs.callPackage ./official/context7 { };
   deepl-mcp-server = pkgs.callPackage ./official/deepl { };
   esa-mcp-server = pkgs.callPackage ./official/esa { };
+  firecrawl-mcp = pkgs.callPackage ./official/firecrawl { };
   freee-mcp = pkgs.callPackage ./official/freee { };
   flux-operator-mcp = pkgs.callPackage ./official/flux-operator-mcp { };
   gcloud-mcp = pkgs.callPackage ./official/gcloud { };
