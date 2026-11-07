@@ -30,13 +30,37 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     cp ${./pnpm-lock.yaml} pnpm-lock.yaml
   '';
 
-  pnpmDeps = fetchPnpmDeps {
-    inherit (finalAttrs) pname version src;
-    pnpm = pnpm_11;
-    fetcherVersion = 3;
-    postPatch = finalAttrs.postPatch;
-    hash = "sha256-1Wu0DatVnETC50MVnU5wCKlVjuzooxfkQk1eN+ZPI5U=";
-  };
+  # fetcherVersion 4 archives pnpm 11's store index as a sqlite3 .dump.
+  # SQLite 3.53 dumps blobs as x'..' instead of X'..'; nixpkgs-unstable
+  # reverts that (NixOS/nixpkgs@29ee10df315a) but nixos-26.05 ships sqlite
+  # 3.53 without it. Apply the same revert here so the hash is the same on
+  # both; it is a no-op where nixpkgs already normalizes. Drop this override
+  # once nixos-26.05 carries the fix.
+  pnpmDeps =
+    (fetchPnpmDeps {
+      inherit (finalAttrs) pname version src;
+      pnpm = pnpm_11;
+      fetcherVersion = 4;
+      postPatch = finalAttrs.postPatch;
+      hash = "sha256-KUPE/DKbGLsWwrSnLwTJ3EdC2JZWFCM8+A9g9vATot0=";
+    }).overrideAttrs
+      (old: {
+        fixupPhase =
+          let
+            anchor = ''rm "$storePath/v11/index.db"'';
+          in
+          assert lib.assertMsg (lib.hasInfix anchor old.fixupPhase)
+            "opentofu-mcp-server: fetchPnpmDeps fixupPhase no longer dumps index.db; revisit the sqlite normalization";
+          builtins.replaceStrings
+            [ anchor ]
+            [
+              ''
+                ${anchor}
+                sed -i "s/,x'/,X'/g" "$storePath/v11/index.db.sql"
+              ''
+            ]
+            old.fixupPhase;
+      });
 
   nativeBuildInputs = [
     nodejs-slim
